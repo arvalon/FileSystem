@@ -38,4 +38,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:onClick="screenShotInputStream"
+        android:id="@+id/button.screenshot.inputstream"
+        android:text="Take screenshot with input stream"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:onClick="screenShotScreenCap"
+        android:id="@+id/button.screenshot.screencap"
+        android:text="Take screenshot with screencap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

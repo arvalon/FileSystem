@@ -9,7 +9,6 @@ import android.os.StatFs;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.view.menu.ExpandedMenuView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -25,15 +25,19 @@ import java.io.Reader;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String LOGTAG = "filesystem.log";
+
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 333;
     private static final String TEMP_FILE_NAME = "tempfile.txt";
     private EditText editText;
-    
-    
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d(LOGTAG, "FileSystem "+ BuildConfig.VERSION_NAME+" onCreate");
 
         findViewById(R.id.secondactivity_btn).setOnClickListener(v -> {
             startActivity(new Intent(this,SecondActivity.class));
@@ -44,18 +48,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void filesDirs(View view) {
         // Приватный каталог приложения - недоступен другим приложениям
-        Log.d("happy", "Internal storage dir: " + getFilesDir().toString());
+        Log.d(LOGTAG, "Internal storage dir: " + getFilesDir().toString());
 
         // Корень "внешнего" носителя
         // Для записи нужны права WRITE_EXTERNAL_STORAGE
         File externalStorage = Environment.getExternalStorageDirectory();
         if(externalStorage != null)
         {
-            Log.d("happy", "External storage dir: " + externalStorage.toString());
+            Log.d(LOGTAG, "External storage dir: " + externalStorage.toString());
             if(Build.VERSION.SDK_INT >= 18)
             {
                 Log.d(
-                        "happy",
+                        LOGTAG,
                         "External storage dir has available bytes: "
                                 + new StatFs(externalStorage.toString()).getAvailableBytes());
             }
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         File externalPics = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if(externalPics != null)
         {
-            Log.d("happy", "External dir for pics: " + externalPics.toString());
+            Log.d(LOGTAG, "External dir for pics: " + externalPics.toString());
         }
 
         // "Внещний" каталог для временных файлов приложения
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         File externalCacheDir = getExternalCacheDir();
         if(externalCacheDir != null)
         {
-            Log.d("happy", "External cache dir: " + externalCacheDir.toString());
+            Log.d(LOGTAG, "External cache dir: " + externalCacheDir.toString());
         }
 
         // Общесистемный "внешний" каталог для файлов определенных типов
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         );
         if(externalPublicPicsDir != null)
         {
-            Log.d("happy", "External public dir for pics: " + externalPublicPicsDir.toString());
+            Log.d(LOGTAG, "External public dir for pics: " + externalPublicPicsDir.toString());
         }
     }
 
@@ -139,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
                     oStream.write(text.getBytes());
                     oStream.flush();
                     oStream.close();
-                    Log.d("happy", "writeToFile");
+                    Log.d(LOGTAG, "writeToFile");
                 } catch (Exception e) {
-                    Log.d("happy", e.toString());
+                    Log.d(LOGTAG, e.toString());
                 }
             }
         }
@@ -187,6 +191,64 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
 
+    public void screenShotInputStream(View view) {
+
+        Log.d(LOGTAG,"Получение скриншота экрана");
+
+        Process process;
+        try {
+            //process = Runtime.getRuntime().exec("screencap -p /sdcard/screencap.png");
+
+            process = Runtime.getRuntime().exec("screencap -p");
+
+            InputStream is = process.getInputStream();
+
+            Log.d(LOGTAG,"is.available(): "+is.available());
+
+            File screenshot = new File (getFilesDir(),generateFileName());
+
+            FileOutputStream fos = new FileOutputStream(screenshot);
+
+            byte[] buffer = new byte[is.available()];
+
+            is.read(buffer);
+
+            fos.write(buffer);
+
+            fos.flush();
+            fos.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void screenShotScreenCap(View view) {
+
+        Process process;
+
+        String fileName = generateFileName();
+
+
+
+        try {
+            process = Runtime.getRuntime().exec("screencap -p "
+                    +getFilesDir().getPath()
+                    + fileName);
+
+            process.waitFor();
+
+        } catch (IOException | InterruptedException e) {
+            Log.d(LOGTAG,"Ошибка получения снимка экрана: "+e.getMessage());
+            e.printStackTrace();
+        }finally {
+            Log.d(LOGTAG,"получение снимка экрана "+ fileName);
+        }
+    }
+
+    private String generateFileName() {
+        return "screenshot_"+System.currentTimeMillis()+".png";
     }
 }
