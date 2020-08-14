@@ -23,44 +23,50 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 
+/**
+ * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами
+ *
+ * https://medium.com/@sriramaripirala/android-10-open-failed-eacces-permission-denied-da8b630a89df
+ */
 public class MainActivity extends AppCompatActivity {
 
-    private final String LOGTAG = "filesystem.log";
+    final static String LOGTAG = "filesystem.log";
 
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 333;
     private static final String TEMP_FILE_NAME = "tempfile.txt";
-    private EditText editText;
 
+    private EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d(LOGTAG, "FileSystem "+ BuildConfig.VERSION_NAME+" onCreate");
+        Log.d(LOGTAG, getString(R.string.app_name)+" v. "+ BuildConfig.VERSION_NAME+" onCreate");
 
         findViewById(R.id.secondactivity_btn).setOnClickListener(v -> {
             startActivity(new Intent(this,SecondActivity.class));
         });
         
-        editText = (EditText) findViewById(R.id.edit_text);
+        editText = findViewById(R.id.edit_text);
     }
 
+    /** распечатить в лог пути к разным директириям, доступным приложению */
     public void filesDirs(View view) {
+
         // Приватный каталог приложения - недоступен другим приложениям
-        Log.d(LOGTAG, "Internal storage dir: " + getFilesDir().toString());
+        Log.d(LOGTAG, "Internal storage: " + getFilesDir().toString());
 
         // Корень "внешнего" носителя
         // Для записи нужны права WRITE_EXTERNAL_STORAGE
         File externalStorage = Environment.getExternalStorageDirectory();
-        if(externalStorage != null)
-        {
-            Log.d(LOGTAG, "External storage dir: " + externalStorage.toString());
-            if(Build.VERSION.SDK_INT >= 18)
-            {
-                Log.d(
-                        LOGTAG,
-                        "External storage dir has available bytes: "
+
+        if(externalStorage != null) {
+
+            Log.d(LOGTAG, "External storage: " + externalStorage.toString());
+
+            if(Build.VERSION.SDK_INT >= 18) {
+                Log.d(LOGTAG, "External storage has available bytes "
                                 + new StatFs(externalStorage.toString()).getAvailableBytes());
             }
         }
@@ -70,9 +76,20 @@ public class MainActivity extends AppCompatActivity {
         // Будет удален при удалении приложения
         // Не нужны права WRITE_EXTERNAL_STORAGE
         File externalPics = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        if(externalPics != null)
-        {
+
+        if(externalPics != null) {
             Log.d(LOGTAG, "External dir for pics: " + externalPics.toString());
+        }
+
+        // Общесистемный "внешний" каталог для файлов определенных типов
+        // При удалении приложения его файлы не удаляются
+        // Для записи нужны права WRITE_EXTERNAL_STORAGE
+        File externalPublicPicDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES
+        );
+
+        if(externalPublicPicDir != null) {
+            Log.d(LOGTAG, "External public dir for pic: " + externalPublicPicDir.toString());
         }
 
         // "Внещний" каталог для временных файлов приложения
@@ -80,35 +97,11 @@ public class MainActivity extends AppCompatActivity {
         // Доступ имеют все приложения
         // Удаляется с удалением приложения
         File externalCacheDir = getExternalCacheDir();
-        if(externalCacheDir != null)
-        {
+
+        if(externalCacheDir != null) {
             Log.d(LOGTAG, "External cache dir: " + externalCacheDir.toString());
-        }
-
-        // Общесистемный "внешний" каталог для файлов определенных типов
-        // При удалении приложения его файлы не удаляются
-        // Для записи нужны права WRITE_EXTERNAL_STORAGE
-        File externalPublicPicsDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES
-        );
-        if(externalPublicPicsDir != null)
-        {
-            Log.d(LOGTAG, "External public dir for pics: " + externalPublicPicsDir.toString());
-        }
-    }
-
-    public boolean isExternalStorageWritable()
-    {
-        String state = Environment.getExternalStorageState();
-        if(Environment.MEDIA_MOUNTED.equals(state))
-        {
-            // "Внешний" носитель доступен на запись
-            return true;
-        }
-        else
-        {
-            // "Внешний" носитель на запись не доступен
-            return false;
+        } else {
+            Log.d(LOGTAG, "External cache dir null");
         }
     }
 
@@ -116,15 +109,11 @@ public class MainActivity extends AppCompatActivity {
         doWrite();
     }
 
-
     private void doWrite() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(
-                    new String[]{
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    },
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     PERMISSIONS_WRITE_EXTERNAL_STORAGE
             );
         } else {
@@ -137,31 +126,45 @@ public class MainActivity extends AppCompatActivity {
             if (externalCacheDir != null && isExternalStorageWritable() && !text.equals("")) {
 
                 OutputStream oStream;
+
                 File f = new File(externalCacheDir, TEMP_FILE_NAME);
+
                 try {
                     oStream = new FileOutputStream(f);
                     oStream.write(text.getBytes());
                     oStream.flush();
                     oStream.close();
-                    Log.d(LOGTAG, "writeToFile");
-                } catch (Exception e) {
-                    Log.d(LOGTAG, e.toString());
+                    Log.d(LOGTAG, "Запись в файл закончена: "+text);
+
+                } catch (IOException e) {
+                    Log.d(LOGTAG, "Запись в файл в StoragePublicDirectory для картинок :"+e.toString());
                 }
             }
         }
+    }
 
+    /** Доступен на запись или нет "Внешний" носитель */
+    public boolean isExternalStorageWritable() {
+
+        String state = Environment.getExternalStorageState();
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
         if (requestCode == PERMISSIONS_WRITE_EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission is granted
                 doWrite();
             } else {
-                Toast.makeText(this, "Cannot write to files without this permission", Toast.LENGTH_SHORT).show();
+                String msg = "Cannot write to files without this permission";
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                Log.d(LOGTAG, msg);
             }
         }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void fileRead(View view) {
@@ -230,8 +233,6 @@ public class MainActivity extends AppCompatActivity {
         Process process;
 
         String fileName = generateFileName();
-
-
 
         try {
             process = Runtime.getRuntime().exec("screencap -p "

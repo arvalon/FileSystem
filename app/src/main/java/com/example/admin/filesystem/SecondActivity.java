@@ -17,24 +17,27 @@ import android.view.MenuItem;
 import java.io.File;
 import java.io.FileOutputStream;
 
-public class SecondActivity extends AppCompatActivity {
+import static com.example.admin.filesystem.MainActivity.LOGTAG;
 
-    private static final String TAG = "vga";
+public class SecondActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.my_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (item.getItemId() == R.id.action_file) {
             doFileOperationWrapper();
             return true;
@@ -63,6 +66,7 @@ public class SecondActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(
+
             int requestCode,
             @NonNull String[] permissions,
             @NonNull int[] grantResults) {
@@ -73,28 +77,29 @@ public class SecondActivity extends AppCompatActivity {
                 // пользователь разрешил
                 doFileOperation();
             } else {
-                Log.d(TAG, "access denied :(");
+                Log.d(LOGTAG, "access denied :(");
             }
 
-
-        } else
+        } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void doFileOperation() {
-        Log.d(TAG, "file operation started");
+
+        Log.d(LOGTAG, "file operation started");
 
         // личная папка приложения на внутреннем сторадже
         File internalFilesDir = getFilesDir();
         String FILENAME = "internal.txt";
-        Log.d(TAG, "internalFilesDir " + internalFilesDir.getAbsolutePath());
+        Log.d(LOGTAG, "internalFilesDir " + internalFilesDir.getAbsolutePath());
         File target1 = new File(internalFilesDir, FILENAME);
         saveSomething(target1, 'a', 100);
-        Log.d(TAG,"записали файл "+FILENAME+" в "+internalFilesDir.getPath());
+        Log.d(LOGTAG,"записали файл "+FILENAME+" в "+internalFilesDir.getPath());
 
         // личная папка приложения на внешнем сторадже
         File externalFilesDir = getExternalFilesDir(null);
-        Log.d(TAG, "externalFilesDir " + externalFilesDir.getAbsolutePath());
+        Log.d(LOGTAG, "externalFilesDir " + externalFilesDir.getAbsolutePath());
         File target2 = new File(externalFilesDir, "external.txt");
         saveSomething(target2, 'b', 160);
 // публичный каталог известного назначения
@@ -104,7 +109,7 @@ public class SecondActivity extends AppCompatActivity {
 
         // публичный каталог == корень SD-карты
         File externalStorage = Environment.getExternalStorageDirectory();
-        Log.d(TAG, "externalStorage " + externalStorage.getAbsolutePath());
+        Log.d(LOGTAG, "externalStorage " + externalStorage.getAbsolutePath());
         File target3 = new File(externalStorage, "public.txt");
         saveSomething(target3, 'c', 215);
 
@@ -112,35 +117,36 @@ public class SecondActivity extends AppCompatActivity {
                 new String[] { target3.toString() }, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
-                        Log.i(TAG, "Scanned " + path + ":");
-                        Log.i(TAG, "-> uri=" + uri);
+                        Log.i(LOGTAG, "Scanned " + path + ":");
+                        Log.i(LOGTAG, "-> uri=" + uri);
                     }
                 });
 
-        Log.d(TAG, "file operation finished");
+        Log.d(LOGTAG, "file operation finished");
     }
 
     private void saveSomething(File where, Character what, int len) {
+
         try {
             String str = new String(new char[len]).replace('\0', what);
 //            if (where.exists()) {
 //                where.delete();
 //            }
             FileOutputStream stream = new FileOutputStream(where, true);
+
             try {
                 stream.write(str.getBytes());
             } finally {
                 stream.close();
             }
 
-            Log.d(TAG, "ok: " + where.getAbsolutePath() + " " + where.length());
+            Log.d(LOGTAG, "ok: " + where.getAbsolutePath() + " " + where.length());
 
         } catch (Exception e) {
-            Log.d(TAG, "error: " + e.getMessage());
+            Log.d(LOGTAG, "error: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
 
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
@@ -152,5 +158,4 @@ public class SecondActivity extends AppCompatActivity {
         // внешний сторадж НЕ доступен на запись
         return false;
     }
-
 }
