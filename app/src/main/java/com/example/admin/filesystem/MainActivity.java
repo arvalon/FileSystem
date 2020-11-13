@@ -44,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(LOGTAG, getString(R.string.app_name)+" v. "+ BuildConfig.VERSION_NAME+" onCreate");
 
-        findViewById(R.id.secondactivity_btn).setOnClickListener(v -> {
-            startActivity(new Intent(this,SecondActivity.class));
-        });
+        findViewById(R.id.secondactivity_btn).setOnClickListener(v -> startActivity(new Intent(this,SecondActivity.class)));
         
         editText = findViewById(R.id.edit_text);
     }
@@ -120,14 +118,15 @@ public class MainActivity extends AppCompatActivity {
 
             String text = editText.getText().toString();
 
-            //File externalCacheDir = getExternalCacheDir();
-            File externalCacheDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            //File externalDir = getExternalCacheDir();
+            //File externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            File externalDir = Environment.getExternalStorageDirectory();
 
-            if (externalCacheDir != null && isExternalStorageWritable() && !text.equals("")) {
+            if (externalDir != null && isExternalStorageWritable() && !text.equals("")) {
 
                 OutputStream oStream;
 
-                File f = new File(externalCacheDir, TEMP_FILE_NAME);
+                File f = new File(externalDir, TEMP_FILE_NAME);
 
                 try {
                     oStream = new FileOutputStream(f);
