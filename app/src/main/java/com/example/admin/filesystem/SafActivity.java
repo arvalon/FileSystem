@@ -10,9 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
 /**
  * Перенос проекта Storage Access Framework в FileSystem для устранения дублирования тестовой среды
  */
@@ -23,23 +20,12 @@ public class SafActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saf);
 
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-
-        Log.d(LOGTAG,"onCreate");
-
-        setFloatingActionButton();
+        Log.d(LOGTAG,"SafActivity onCreate");
     }
 
     private void notifUser(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         Log.d(LOGTAG, msg);
-    }
-
-    private void setFloatingActionButton() {
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
     }
 
     @Override
