@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.secondactivity_btn).setOnClickListener(v -> startActivity(new Intent(this,SecondActivity.class)));
         
         editText = findViewById(R.id.edit_text);
+
+        new Foo().printHelloWorld();
     }
 
     /** распечатить в лог пути к разным директириям, доступным приложению */
