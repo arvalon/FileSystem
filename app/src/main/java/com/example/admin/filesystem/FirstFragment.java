@@ -1,4 +1,4 @@
-package com.example.admin.filesystem.storageaccessframework;
+package com.example.admin.filesystem;
 
 import static com.example.admin.filesystem.MainActivity.LOGTAG;
 
@@ -16,8 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
-
-import com.example.admin.filesystem.R;
 
 import java.io.BufferedReader;
 import java.io.File;

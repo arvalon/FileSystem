@@ -14,8 +14,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.admin.filesystem.storageaccessframework.SafActivity;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,7 +26,7 @@ import java.io.Reader;
 /**
  * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами
  *
- * https://medium.com/@sriramaripirala/android-10-open-failed-eacces-permission-denied-da8b630a89df
+ * <a href="https://medium.com/@sriramaripirala/android-10-open-failed-eacces-permission-denied-da8b630a89df">Android 10 open failed: EACCES (Permission denied)</a>
  */
 public class MainActivity extends AppCompatActivity {
 

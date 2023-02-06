@@ -1,4 +1,4 @@
-package com.example.admin.filesystem.storageaccessframework;
+package com.example.admin.filesystem;
 
 import static com.example.admin.filesystem.MainActivity.LOGTAG;
 
@@ -9,9 +9,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import com.example.admin.filesystem.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -24,7 +22,8 @@ public class SafActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saf);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        //Toolbar toolbar = findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
         Log.d(LOGTAG,"onCreate");
