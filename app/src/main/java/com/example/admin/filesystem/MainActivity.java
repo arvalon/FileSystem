@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.admin.filesystem.storageaccessframework.SafActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,7 +32,7 @@ import java.io.Reader;
  */
 public class MainActivity extends AppCompatActivity {
 
-    final static String LOGTAG = "filesystem.log";
+    public final static String LOGTAG = "filesystem.log";
 
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 333;
     private static final String TEMP_FILE_NAME = "tempfile.txt";
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.d(LOGTAG, getString(R.string.app_name)+" v. "+ BuildConfig.VERSION_NAME+" onCreate");
+
+        findViewById(R.id.saf_btn).setOnClickListener(v -> startActivity(new Intent(this, SafActivity.class)));
 
         findViewById(R.id.secondactivity_btn).setOnClickListener(v -> startActivity(new Intent(this,SecondActivity.class)));
         
