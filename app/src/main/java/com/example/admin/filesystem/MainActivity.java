@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.getserial.Foo;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -50,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
         
         editText = findViewById(R.id.edit_text);
 
-        new Foo().printHelloWorld();
+        new InnerFoo().printHelloWorld();
+
+        Foo foo = new Foo();
+        foo.printHelloWorld();
     }
 
     /** распечатить в лог пути к разным директириям, доступным приложению */
