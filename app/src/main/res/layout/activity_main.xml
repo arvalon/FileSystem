@@ -7,26 +7,33 @@
     tools:context="com.example.admin.filesystem.MainActivity">
 
     <Button
-        android:id="@+id/saf.btn"
+        android:id="@+id/getpermission_btn"
+        android:onClick="getPermissions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get storage permissions"/>
+
+    <Button
+        android:id="@+id/saf_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Storage Access Framework"/>
 
     <Button
-        android:id="@+id/secondactivity.btn"
+        android:id="@+id/secondactivity_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Second Activity"/>
 
     <Button
-        android:id="@+id/files.dirs"
+        android:id="@+id/files_dirs"
         android:onClick="filesDirs"
         android:text="Print directories to log"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/edit.text"
+        android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

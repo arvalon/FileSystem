@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,15 +27,16 @@ import java.io.OutputStream;
 import java.io.Reader;
 
 /**
- * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами
- *
- * <a href="https://medium.com/@sriramaripirala/android-10-open-failed-eacces-permission-denied-da8b630a89df">Android 10 open failed: EACCES (Permission denied)</a>
+ * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами<br>
+ * <a href="https://stackoverflow.com/questions/63302047/android-10-eacces-permission-denied-issue">Android 10 open failed: EACCES (Permission denied)</a><br>
+ * <a href="https://ourcodeworld.com/articles/read/1559/how-does-manage-external-storage-permission-work-in-android">How to</a><br>
+ * <a href="https://android-tools.ru/coding/poluchaem-razreshenie-manage_external_storage-dlya-prilozheniya/?ysclid=llw1l0eel7465907824">How to 2</a>
  */
 public class MainActivity extends AppCompatActivity {
 
     public final static String LOGTAG = "filesystem.log";
 
-    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 333;
+    private static final int PERMISSIONS_STORAGE = 333;
     private static final String TEMP_FILE_NAME = "tempfile.txt";
 
     private EditText editText;
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d(LOGTAG, getString(R.string.app_name)+" v. "+ BuildConfig.VERSION_NAME+" onCreate");
+        Log.d(LOGTAG, getString(R.string.app_name) + " v. "+ BuildConfig.VERSION_NAME + ", onCreate, Build.VERSION.SDK_INT: " + Build.VERSION.SDK_INT);
 
         findViewById(R.id.saf_btn).setOnClickListener(v -> startActivity(new Intent(this, SafActivity.class)));
 
@@ -52,10 +54,58 @@ public class MainActivity extends AppCompatActivity {
         
         editText = findViewById(R.id.edit_text);
 
-        new InnerFoo().printHelloWorld();
+        //KotlinClassTest();
 
-        Foo foo = new Foo();
-        foo.printHelloWorld();
+        if (PermissionUtils.hasPermissions(this)) {
+            logPrint("Разрешение на файлы получено");
+        } else {
+            logPrint("Разрешение на файлы не получено");
+        }
+    }
+
+    public void getPermissions(View view) {
+
+        if (!PermissionUtils.hasPermissions(this)) {
+            PermissionUtils.requestPermissions(this, PERMISSIONS_STORAGE);
+        } else {
+            logPrint("Разрешение на файлы уже получены");
+        }
+    }
+
+    /* это отрабатывает от Android 6 до Android 10 */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == PERMISSIONS_STORAGE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                logPrint("onRequestPermissionsResult Ура есть права!");
+                //doWrite();
+
+            } else {
+                logPrint("onRequestPermissionsResult Права так и не прилетели :(");
+            }
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /* это отрабатывает на Android 11+ */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (requestCode == PERMISSIONS_STORAGE) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (PermissionUtils.hasPermissions(this)) {
+                    logPrint("onActivityResult Ура есть права!");
+                } else {
+                    logPrint("onActivityResult Права так и не прилетели :(");
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /** распечатить в лог пути к разным директириям, доступным приложению */
@@ -70,12 +120,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(externalStorage != null) {
 
-            Log.d(LOGTAG, "External storage: " + externalStorage.toString());
-
-            if(Build.VERSION.SDK_INT >= 18) {
-                Log.d(LOGTAG, "External storage has available bytes "
-                                + new StatFs(externalStorage.toString()).getAvailableBytes());
-            }
+            Log.d(LOGTAG, "External storage: " + externalStorage + ", свободно (байт): " + new StatFs(externalStorage.toString()).getAvailableBytes());
+        }else {
+            Log.d(LOGTAG, "External storage null");
         }
 
         // Каталог приложения на внешнем носителе
@@ -85,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         File externalPics = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         if(externalPics != null) {
-            Log.d(LOGTAG, "External dir for pics: " + externalPics.toString());
+            Log.d(LOGTAG, "External dir for pics: " + externalPics);
         }
 
         // Общесистемный "внешний" каталог для файлов определенных типов
@@ -96,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         if(externalPublicPicDir != null) {
-            Log.d(LOGTAG, "External public dir for pic: " + externalPublicPicDir.toString());
+            Log.d(LOGTAG, "External public dir for pic: " + externalPublicPicDir);
         }
 
         // "Внещний" каталог для временных файлов приложения
@@ -106,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         File externalCacheDir = getExternalCacheDir();
 
         if(externalCacheDir != null) {
-            Log.d(LOGTAG, "External cache dir: " + externalCacheDir.toString());
+            Log.d(LOGTAG, "External cache dir: " + externalCacheDir);
         } else {
             Log.d(LOGTAG, "External cache dir null");
         }
@@ -118,37 +165,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void doWrite() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSIONS_WRITE_EXTERNAL_STORAGE
-            );
-        } else {
+        String text = editText.getText().toString();
 
-            String text = editText.getText().toString();
+        //File externalDir = getExternalCacheDir();
+        //File externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File externalDir = Environment.getExternalStorageDirectory();
 
-            //File externalDir = getExternalCacheDir();
-            //File externalDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            File externalDir = Environment.getExternalStorageDirectory();
+        if (externalDir != null && isExternalStorageWritable() && !text.equals("")) {
 
-            if (externalDir != null && isExternalStorageWritable() && !text.equals("")) {
+            try (OutputStream oStream = new FileOutputStream(new File(externalDir, TEMP_FILE_NAME))) {
 
-                OutputStream oStream;
+                oStream.write(text.getBytes());
+                oStream.flush();
+                oStream.close();
+                Log.d(LOGTAG, "Запись в файл закончена: " + text);
 
-                File f = new File(externalDir, TEMP_FILE_NAME);
-
-                try {
-                    oStream = new FileOutputStream(f);
-                    oStream.write(text.getBytes());
-                    oStream.flush();
-                    oStream.close();
-                    Log.d(LOGTAG, "Запись в файл закончена: "+text);
-
-                } catch (IOException e) {
-                    Log.d(LOGTAG, "Запись в файл в StoragePublicDirectory для картинок :"+e.toString());
-                }
+            } catch (IOException e) {
+                Log.d(LOGTAG, "Запись в файл в StoragePublicDirectory для картинок :" + e);
             }
         }
+
     }
 
     /** Доступен на запись или нет "Внешний" носитель */
@@ -156,23 +192,6 @@ public class MainActivity extends AppCompatActivity {
 
         String state = Environment.getExternalStorageState();
         return Environment.MEDIA_MOUNTED.equals(state);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == PERMISSIONS_WRITE_EXTERNAL_STORAGE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted
-                doWrite();
-            } else {
-                String msg = "Cannot write to files without this permission";
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                Log.d(LOGTAG, msg);
-            }
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void fileRead(View view) {
@@ -259,5 +278,17 @@ public class MainActivity extends AppCompatActivity {
 
     private String generateFileName() {
         return "screenshot_"+System.currentTimeMillis()+".png";
+    }
+
+    private static void KotlinClassTest() {
+
+        new InnerFoo().printHelloWorld();
+
+        Foo foo = new Foo();
+        foo.printHelloWorld();
+    }
+    private void logPrint(String msg){
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        Log.d(LOGTAG, msg);
     }
 }
