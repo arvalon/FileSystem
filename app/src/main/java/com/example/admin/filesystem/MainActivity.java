@@ -160,10 +160,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fileWrite(View view) {
-        doWrite();
-    }
-
-    private void doWrite() {
 
         String text = editText.getText().toString();
 
@@ -184,7 +180,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOGTAG, "Запись в файл в StoragePublicDirectory для картинок :" + e);
             }
         }
+    }
 
+    public void createDir(View view){
+
+        File dir = new File(Environment.getExternalStorageDirectory(),"MyDir");
+
+        logPrint("Создание папки "+dir.getAbsolutePath()+": "+dir.mkdir());
     }
 
     /** Доступен на запись или нет "Внешний" носитель */
