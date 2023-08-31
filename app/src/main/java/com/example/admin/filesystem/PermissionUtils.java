@@ -45,7 +45,7 @@ public class PermissionUtils {
             }
         } else {
             ActivityCompat.requestPermissions(activity,
-                    new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     requestCode);
         }
     }

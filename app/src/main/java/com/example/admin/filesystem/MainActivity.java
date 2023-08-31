@@ -9,6 +9,8 @@ import android.os.StatFs;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,18 +27,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами<br>
  * <a href="https://stackoverflow.com/questions/63302047/android-10-eacces-permission-denied-issue">Android 10 open failed: EACCES (Permission denied)</a><br>
  * <a href="https://ourcodeworld.com/articles/read/1559/how-does-manage-external-storage-permission-work-in-android">How to</a><br>
- * <a href="https://android-tools.ru/coding/poluchaem-razreshenie-manage_external_storage-dlya-prilozheniya/?ysclid=llw1l0eel7465907824">How to 2</a>
+ * <a href="https://android-tools.ru/coding/poluchaem-razreshenie-manage_external_storage-dlya-prilozheniya/?ysclid=llw1l0eel7465907824">How to 2</a><br>
+ * <a href="https://stackoverflow.com/questions/36936914/list-of-android-permissions-normal-permissions-and-dangerous-permissions-in-api">Список обычных и опасных разрешений</a>
  */
 public class MainActivity extends AppCompatActivity {
 
     public final static String LOGTAG = "filesystem.log";
 
-    private static final int PERMISSIONS_STORAGE = 333;
+    private static final int PERMISSIONS_STORAGE = 1;
+    private static final int PERMISSIONS_PHONE_STATE = 2;
     private static final String TEMP_FILE_NAME = "tempfile.txt";
 
     private EditText editText;
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.d(LOGTAG, getString(R.string.app_name) + " v. "+ BuildConfig.VERSION_NAME + ", onCreate, Build.VERSION.SDK_INT: " + Build.VERSION.SDK_INT);
+        logPrint("Разрешение на запись в External Storage: "+PermissionUtils.hasPermissions(this));
 
         findViewById(R.id.saf_btn).setOnClickListener(v -> startActivity(new Intent(this, SafActivity.class)));
 
@@ -55,12 +61,6 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.edit_text);
 
         //KotlinClassTest();
-
-        if (PermissionUtils.hasPermissions(this)) {
-            logPrint("Разрешение на файлы получено");
-        } else {
-            logPrint("Разрешение на файлы не получено");
-        }
     }
 
     public void getPermissions(View view) {
@@ -75,37 +75,55 @@ public class MainActivity extends AppCompatActivity {
     /* это отрабатывает от Android 6 до Android 10 */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSIONS_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission is granted
-                logPrint("onRequestPermissionsResult Ура есть права!");
-                //doWrite();
 
+                logPrint("onRequestPermissionsResult Ура есть права на файлы!");
             } else {
                 logPrint("onRequestPermissionsResult Права так и не прилетели :(");
             }
+            requestOtherPermissions();
         }
 
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_PHONE_STATE){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                logPrint("onRequestPermissionsResult Ура есть права READ_PHONE_STATE!");
+
+            } else {
+                logPrint("onRequestPermissionsResult Права READ_PHONE_STATE так и не прилетели :(");
+            }
+        }
     }
 
     /* это отрабатывает на Android 11+ */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PERMISSIONS_STORAGE) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
                 if (PermissionUtils.hasPermissions(this)) {
                     logPrint("onActivityResult Ура есть права!");
                 } else {
                     logPrint("onActivityResult Права так и не прилетели :(");
                 }
+
+                requestOtherPermissions();
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void requestOtherPermissions(){
+        logPrint("requestOtherPermissions");
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_PHONE_STATE);
+        }
     }
 
     /** распечатить в лог пути к разным директириям, доступным приложению */
@@ -198,28 +216,29 @@ public class MainActivity extends AppCompatActivity {
 
     public void fileRead(View view) {
 
-        File externalCacheDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
 
-        if(externalCacheDir != null)
-        {
-            File f = new File(externalCacheDir, TEMP_FILE_NAME);
-            InputStream inputStream;
-            try {
-                inputStream = new FileInputStream(f);
+        if(externalStorageDirectory != null) {
+
+            try (InputStream inputStream = new FileInputStream(new File(externalStorageDirectory, TEMP_FILE_NAME))) {
 
                 StringBuilder sb = new StringBuilder();
-                Reader r = new InputStreamReader(inputStream, "UTF-8");
+                Reader r = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 char[] buffer = new char[1000];
 
                 int amt = r.read(buffer);
+
                 while (amt > 0)
                 {
                     sb.append(buffer, 0, amt);
                     amt = r.read(buffer);
                 }
-                Toast.makeText(this, "File is :" + sb.toString(), Toast.LENGTH_SHORT).show();
 
-            } catch (Exception e) {
+                logPrint("Содежжимое "+ TEMP_FILE_NAME+": " + sb);
+
+            } catch (IOException e) {
+
+                Log.d(LOGTAG, e.toString());
                 e.printStackTrace();
             }
         }
