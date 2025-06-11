@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.getserial.Foo;
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editText;
 
+    private TextView extRootTv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.secondactivity_btn).setOnClickListener(v -> startActivity(new Intent(this,SecondActivity.class)));
         
         editText = findViewById(R.id.edit_text);
+
+        extRootTv = findViewById(R.id.extroottv);
 
         //KotlinClassTest();
     }
@@ -139,8 +144,10 @@ public class MainActivity extends AppCompatActivity {
         if(externalStorage != null) {
 
             Log.d(LOGTAG, "External storage: " + externalStorage + ", свободно (байт): " + new StatFs(externalStorage.toString()).getAvailableBytes());
+            extRootTv.setText("ExtRoot: "+externalStorage);
         }else {
             Log.d(LOGTAG, "External storage null");
+            extRootTv.setText("ExtRoot: null");
         }
 
         // Каталог приложения на внешнем носителе
