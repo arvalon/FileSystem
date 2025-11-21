@@ -10,7 +10,50 @@
     tools:context="com.example.admin.filesystem.SecondActivity">
 
     <TextView
+        android:id="@+id/secondActivitylabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Apache String Utils transform" />
+
+    <EditText
+        android:id="@+id/edit_text"
+        android:layout_below="@id/secondActivitylabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/performtexttransform1_btn"
+        android:layout_below="@id/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perform Text Transform 1"/>
+
+    <Button
+        android:id="@+id/performtexttransform2_btn"
+        android:layout_below="@id/performtexttransform1_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perform Text Transform 2"/>
+
+    <Button
+        android:id="@+id/performtexttransform3_btn"
+        android:layout_below="@id/performtexttransform2_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perform Text Transform 3"/>
+
+    <Button
+        android:id="@+id/performtexttransform4_btn"
+        android:layout_below="@id/performtexttransform3_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Perform Text Transform 4"/>
+
+    <TextView
+        android:id="@+id/result_tv"
+        android:layout_below="@id/performtexttransform4_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="empty" />
+
 </RelativeLayout>

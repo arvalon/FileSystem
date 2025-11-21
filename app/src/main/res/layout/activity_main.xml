@@ -23,7 +23,7 @@
         android:id="@+id/secondactivity_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Second Activity"/>
+        android:text="Apache String Utils"/>
 
     <Button
         android:id="@+id/files_dirs"

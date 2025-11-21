@@ -13,19 +13,56 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
+import org.apache.commons.lang3.StringUtils;
+
 import static com.example.admin.filesystem.MainActivity.LOGTAG;
 
+/**
+ * https://www.baeldung.com/java-pad-string
+ */
 public class SecondActivity extends AppCompatActivity {
+
+    private EditText editText;
+    private Button button1;
+    private Button button2;
+    private Button button3;
+    private Button button4;
+    private TextView resultTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+
+        editText = findViewById(R.id.edit_text);
+        button1 = findViewById(R.id.performtexttransform1_btn);
+        button2 = findViewById(R.id.performtexttransform2_btn);
+        button3 = findViewById(R.id.performtexttransform3_btn);
+        button4 = findViewById(R.id.performtexttransform4_btn);
+        resultTv = findViewById(R.id.result_tv);
+
+        button1.setOnClickListener(v -> {
+            String str = editText.getText().toString();
+            String str2 = StringUtils.leftPad(str,20);
+            resultTv.setText(str2);
+            Log.d(LOGTAG,"button1: "+str2);
+        });
+
+        button2.setOnClickListener(v -> {
+            String str = editText.getText().toString();
+            String str2 = StringUtils.leftPad(str,10,"0");
+            resultTv.setText(str2);
+            Log.d(LOGTAG,"button2: "+str2);
+        });
+
     }
 
     @Override
