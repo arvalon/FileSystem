@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами<br>
@@ -66,6 +68,25 @@ public class MainActivity extends AppCompatActivity {
         extRootTv = findViewById(R.id.extroottv);
 
         //KotlinClassTest();
+
+        // Pair experiment
+        Pair<String, String> myPair1 = new Pair<>("FirstName1","SecondName1");
+        Pair<String, String> myPair2 = new Pair<>("FirstName2","SecondName2");
+        Pair<String, String> myPair3 = new Pair<>("FirstName3","SecondName3");
+        ArrayList<Pair> myList = new ArrayList<>();
+
+        myList.add(myPair1);
+        myList.add(myPair2);
+        myList.add(myPair3);
+
+        for (Pair pair : myList) {
+            pair.toString();logPrint("Pair: "+pair.first+" "+pair.second);
+
+        }
+
+        // изменим какой-нибудь элемент
+
+        //myList.get(1).first = "Chandge"; // final, так низя
     }
 
     public void getPermissions(View view) {
