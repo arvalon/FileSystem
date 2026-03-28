@@ -38,6 +38,7 @@ import java.util.ArrayList;
  * <a href="https://ourcodeworld.com/articles/read/1559/how-does-manage-external-storage-permission-work-in-android">How to</a><br>
  * <a href="https://android-tools.ru/coding/poluchaem-razreshenie-manage_external_storage-dlya-prilozheniya/?ysclid=llw1l0eel7465907824">How to 2</a><br>
  * <a href="https://stackoverflow.com/questions/36936914/list-of-android-permissions-normal-permissions-and-dangerous-permissions-in-api">Список обычных и опасных разрешений</a>
+ *
  */
 public class MainActivity extends AppCompatActivity {
 
