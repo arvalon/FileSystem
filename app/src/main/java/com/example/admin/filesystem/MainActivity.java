@@ -69,25 +69,6 @@ public class MainActivity extends AppCompatActivity {
         extRootTv = findViewById(R.id.extroottv);
 
         //KotlinClassTest();
-
-        // Pair experiment
-        Pair<String, String> myPair1 = new Pair<>("FirstName1","SecondName1");
-        Pair<String, String> myPair2 = new Pair<>("FirstName2","SecondName2");
-        Pair<String, String> myPair3 = new Pair<>("FirstName3","SecondName3");
-        ArrayList<Pair> myList = new ArrayList<>();
-
-        myList.add(myPair1);
-        myList.add(myPair2);
-        myList.add(myPair3);
-
-        for (Pair pair : myList) {
-            pair.toString();logPrint("Pair: "+pair.first+" "+pair.second);
-
-        }
-
-        // изменим какой-нибудь элемент
-
-        //myList.get(1).first = "Chandge"; // final, так низя
     }
 
     public void getPermissions(View view) {
@@ -99,10 +80,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /* это отрабатывает от Android 6 до Android 10 */
+    /* это отрабатывает начиная Android 6 */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        logPrint("onRequestPermissionsResult Android 6+");
 
         if (requestCode == PERMISSIONS_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -129,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        logPrint("onActivityResult Android 11+");
 
         if (requestCode == PERMISSIONS_STORAGE) {
 
@@ -224,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOGTAG, "Запись в файл закончена: " + text);
 
             } catch (IOException e) {
-                Log.d(LOGTAG, "Запись в файл в StoragePublicDirectory для картинок :" + e);
+                Log.d(LOGTAG, "Запись в файл в StoragePublicDirectory:" + e);
             }
         }
     }

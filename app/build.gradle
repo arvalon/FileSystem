@@ -8,8 +8,8 @@ android {
         minSdkVersion 23
         compileSdk 36
         targetSdkVersion 36
-        versionCode 16
-        versionName "2.8"
+        versionCode 17
+        versionName "2.9"
         multiDexEnabled true
     }
     buildTypes {
@@ -20,8 +20,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_24
+        targetCompatibility JavaVersion.VERSION_24
     }
 
     buildFeatures {
