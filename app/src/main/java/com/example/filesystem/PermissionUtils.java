@@ -17,6 +17,10 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * Методы запроса прав на файловую систему. Для Android до 10 версии (включительно) старый способ через диалоги
+ * а начиная с Android 11 через отдельную активность
+ */
 public class PermissionUtils {
 
     public static boolean hasPermissions(Context context) {
