@@ -1,6 +1,6 @@
-package com.example.admin.filesystem;
+package com.example.filesystem;
 
-import static com.example.admin.filesystem.MainActivity.LOGTAG;
+import static com.example.filesystem.MainActivity.LOGTAG;
 
 import android.app.Activity;
 import android.content.Context;

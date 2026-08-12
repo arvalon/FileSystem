@@ -1,7 +1,7 @@
-package com.example.admin.filesystem
+package com.example.filesystem
 
 import android.util.Log
-import com.example.admin.filesystem.MainActivity.LOGTAG
+import com.example.filesystem.MainActivity.LOGTAG
 
 class InnerFoo {
 

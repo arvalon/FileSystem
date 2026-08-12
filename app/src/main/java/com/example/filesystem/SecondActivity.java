@@ -1,4 +1,4 @@
-package com.example.admin.filesystem;
+package com.example.filesystem;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -22,7 +22,9 @@ import java.io.FileOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static com.example.admin.filesystem.MainActivity.LOGTAG;
+import static com.example.filesystem.MainActivity.LOGTAG;
+
+import com.example.admin.filesystem.R;
 
 /**
  * https://www.baeldung.com/java-pad-string

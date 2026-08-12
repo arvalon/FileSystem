@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <!-- <uses-permission android:name="android.permission.CAMERA"/> -->
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/>
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
 
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity"
+        <activity android:name="com.example.filesystem.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,8 +23,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".SafActivity"/>
-        <activity android:name=".SecondActivity"/>
+        <activity android:name="com.example.filesystem.SafActivity"/>
+        <activity android:name="com.example.filesystem.SecondActivity"/>
 
     </application>
 

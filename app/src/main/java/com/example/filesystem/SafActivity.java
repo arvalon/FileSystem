@@ -1,6 +1,6 @@
-package com.example.admin.filesystem;
+package com.example.filesystem;
 
-import static com.example.admin.filesystem.MainActivity.LOGTAG;
+import static com.example.filesystem.MainActivity.LOGTAG;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.admin.filesystem.R;
 
 /**
  * Перенос проекта Storage Access Framework в FileSystem для устранения дублирования тестовой среды

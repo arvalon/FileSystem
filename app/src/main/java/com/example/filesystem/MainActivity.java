@@ -1,4 +1,4 @@
-package com.example.admin.filesystem;
+package com.example.filesystem;
 
 import android.Manifest;
 import android.content.Intent;
@@ -13,13 +13,13 @@ import androidx.core.app.ActivityCompat;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.getserial.Foo;
+import com.example.admin.filesystem.BuildConfig;
+import com.example.admin.filesystem.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +30,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 /**
  * При переходе на SDK 29+ при запуске на Android 10+ требуется переход на новый способ работы с файлами<br>
@@ -67,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.edit_text);
 
         extRootTv = findViewById(R.id.extroottv);
-
-        //KotlinClassTest();
     }
 
+    /* Кнопка "Get Storage Permission" */
     public void getPermissions(View view) {
 
         if (!PermissionUtils.hasPermissions(this)) {
@@ -318,9 +316,6 @@ public class MainActivity extends AppCompatActivity {
     private static void KotlinClassTest() {
 
         new InnerFoo().printHelloWorld();
-
-        Foo foo = new Foo();
-        foo.printHelloWorld();
     }
     private void logPrint(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();

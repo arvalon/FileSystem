@@ -1,6 +1,6 @@
-package com.example.admin.filesystem;
+package com.example.filesystem;
 
-import static com.example.admin.filesystem.MainActivity.LOGTAG;
+import static com.example.filesystem.MainActivity.LOGTAG;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import com.example.admin.filesystem.R;
 
 public class FirstFragment extends Fragment {
 
